@@ -13,14 +13,15 @@ class TransactionCard extends StatelessWidget {
           Container(
             margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
             child: Text(
-              "${_transaction.amount} Ft",
+              "${_transaction.amount.toStringAsFixed(0)} Ft",
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
-                  color: Colors.purple),
+                  color: Theme.of(context).primaryColor),
             ),
             decoration: BoxDecoration(
-                border: Border.all(color: Colors.purple, width: 2)),
+                border: Border.all(
+                    color: Theme.of(context).primaryColor, width: 2)),
             padding: EdgeInsets.all(5),
             width: 120,
           ),
@@ -29,16 +30,13 @@ class TransactionCard extends StatelessWidget {
             children: [
               Text(
                 _transaction.title,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: Theme.of(context).textTheme.bodyText1,
               ),
               Text(
                 DateFormat.yMMMd().format(_transaction.date),
                 style: TextStyle(
                     fontWeight: FontWeight.normal,
-                    color: Colors.grey,
+                    color: Theme.of(context).primaryColorLight,
                     fontSize: 14),
               )
             ],
