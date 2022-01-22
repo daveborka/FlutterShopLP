@@ -30,11 +30,18 @@ class TransactionCard extends StatelessWidget {
               color: Theme.of(context).primaryColorLight,
               fontSize: 18),
         ),
-        trailing: IconButton(
-          icon: Icon(Icons.delete),
-          color: Theme.of(context).errorColor,
-          onPressed: () => _deletTransaction(_transaction.id),
-        ),
+        trailing: MediaQuery.of(context).size.width > 450
+            ? FlatButton.icon(
+                textColor: Theme.of(context).primaryColor,
+                onPressed: () => _deletTransaction(_transaction.id),
+                icon: Icon(Icons.delete),
+                label: Text('Delete'),
+              )
+            : IconButton(
+                icon: Icon(Icons.delete),
+                color: Theme.of(context).errorColor,
+                onPressed: () => _deletTransaction(_transaction.id),
+              ),
       ),
     );
 

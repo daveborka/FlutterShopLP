@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import './widgets/new_transaction.dart';
 import './widgets/transaction_list.dart';
 import 'models/transaction.dart';
@@ -43,6 +42,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool _showChart = false;
   void _startAddNewTransaction(BuildContext ctx) {
     showModalBottomSheet(
       context: ctx,
@@ -105,6 +105,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuuery = MediaQuery.of(context);
+    final isLandscape = mediaQuuery.orientation == Orientation.landscape;
     final appBar = AppBar(
       title: Text(
         'Personal Expenses',
@@ -115,6 +117,14 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(Icons.add))
       ],
     );
+
+    var transactionListWidget = Container(
+      child: TransactionList(_userTransaction, _deleteTransaction),
+      height: (mediaQuuery.size.height -
+              appBar.preferredSize.height -
+              mediaQuuery.padding.top) *
+          0.7,
+    );
     return Scaffold(
       appBar: appBar,
       body: SingleChildScrollView(
@@ -122,19 +132,38 @@ class _MyHomePageState extends State<MyHomePage> {
           //mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-                height: (MediaQuery.of(context).size.height -
-                        appBar.preferredSize.height -
-                        MediaQuery.of(context).padding.top) *
-                    0.3,
-                child: Chart(_userTransaction)),
-            Container(
-              child: TransactionList(_userTransaction, _deleteTransaction),
-              height: (MediaQuery.of(context).size.height -
-                      appBar.preferredSize.height -
-                      MediaQuery.of(context).padding.top) *
-                  0.7,
-            ),
+            if (isLandscape)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Show Chart'),
+                  Switch.adaptive(
+                    value: _showChart,
+                    onChanged: (val) {
+                      setState(() {
+                        _showChart = val;
+                      });
+                    },
+                  )
+                ],
+              ),
+            if (!isLandscape)
+              Container(
+                  height: (mediaQuuery.size.height -
+                          appBar.preferredSize.height -
+                          mediaQuuery.padding.top) *
+                      0.3,
+                  child: Chart(_userTransaction)),
+            if (!isLandscape) transactionListWidget,
+            if (isLandscape)
+              _showChart
+                  ? Container(
+                      height: (mediaQuuery.size.height -
+                              appBar.preferredSize.height -
+                              mediaQuuery.padding.top) *
+                          0.7,
+                      child: Chart(_userTransaction))
+                  : transactionListWidget
           ],
         ),
       ),
