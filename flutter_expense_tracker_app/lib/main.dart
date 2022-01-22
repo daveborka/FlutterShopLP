@@ -16,8 +16,8 @@ class MyApp extends StatelessWidget {
         accentColor: Colors.amber,
         fontFamily: 'Quicksand',
         textTheme: ThemeData.light().textTheme.copyWith(
-              bodyText1: TextStyle(fontFamily: 'OpenSans', fontSize: 18),
-            ),
+            bodyText1: TextStyle(fontFamily: 'OpenSans', fontSize: 18),
+            button: TextStyle(fontFamily: 'OpenSans', color: Colors.white)),
         appBarTheme: AppBarTheme(
           titleTextStyle: TextStyle(
               fontFamily: 'OpenSans',
@@ -45,6 +45,12 @@ class _MyHomePageState extends State<MyHomePage> {
         behavior: HitTestBehavior.opaque,
       ),
     );
+  }
+
+  void _deleteTransaction(String id) {
+    setState(() {
+      _userTransaction.removeWhere((transaction) => transaction.id == id);
+    });
   }
 
   final List<Transaction> _userTransaction = [
@@ -78,11 +84,11 @@ class _MyHomePageState extends State<MyHomePage> {
     ).toList();
   }
 
-  void _addNewTransaction(String txTitle, double amount) {
+  void _addNewTransaction(String txTitle, double amount, DateTime date) {
     final newTransaction = Transaction(
       title: txTitle,
       amount: amount,
-      date: DateTime.now(),
+      date: date,
       id: DateTime.now().toString(),
     );
     setState(() {
@@ -97,7 +103,11 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(
           'Personal Expenses',
         ),
-        actions: [IconButton(onPressed: () => {}, icon: Icon(Icons.add))],
+        actions: [
+          IconButton(
+              onPressed: () => _startAddNewTransaction(context),
+              icon: Icon(Icons.add))
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -105,7 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Chart(_userTransaction),
-            TransactionList(_userTransaction),
+            TransactionList(_userTransaction, _deleteTransaction),
           ],
         ),
       ),
