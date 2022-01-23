@@ -35,7 +35,7 @@ class TransactionCard extends StatelessWidget {
                 textColor: Theme.of(context).primaryColor,
                 onPressed: () => _deletTransaction(_transaction.id),
                 icon: Icon(Icons.delete),
-                label: Text('Delete'),
+                label: const Text('Delete'),
               )
             : IconButton(
                 icon: Icon(Icons.delete),
