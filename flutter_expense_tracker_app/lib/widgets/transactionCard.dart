@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 import '../models/transaction.dart';
 
 class TransactionCard extends StatelessWidget {
   final Transaction _transaction;
   final Function _deletTransaction;
   TransactionCard(this._transaction, this._deletTransaction);
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -15,7 +17,7 @@ class TransactionCard extends StatelessWidget {
         leading: CircleAvatar(
             radius: 30,
             child: Padding(
-              padding: EdgeInsets.all(5),
+              padding: const EdgeInsets.all(5),
               child: FittedBox(
                   child: Text("${_transaction.amount.toStringAsFixed(0)} Ft")),
             )),

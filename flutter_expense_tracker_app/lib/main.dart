@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import './widgets/new_transaction.dart';
 import './widgets/transaction_list.dart';
@@ -41,8 +43,31 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   bool _showChart = false;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print(state);
+    // TODO: implement didChangeAppLifecycleState
+    super.didChangeAppLifecycleState(state);
+  }
+
+  //clearing life cycle listeners
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    // TODO: implement dispose
+    super.dispose();
+  }
+
   void _startAddNewTransaction(BuildContext ctx) {
     showModalBottomSheet(
       context: ctx,
@@ -103,6 +128,47 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  List<Widget> _buildLandscapeContent(MediaQueryData mediaQueryData,
+      AppBar appBar, Widget transactionListWidget) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('Show Chart'),
+          Switch.adaptive(
+            value: _showChart,
+            onChanged: (val) {
+              setState(() {
+                _showChart = val;
+              });
+            },
+          )
+        ],
+      ),
+      _showChart
+          ? Container(
+              height: (mediaQueryData.size.height -
+                      appBar.preferredSize.height -
+                      mediaQueryData.padding.top) *
+                  0.7,
+              child: Chart(_userTransaction))
+          : transactionListWidget
+    ];
+  }
+
+  List<Widget> _buildPortraitContent(
+      MediaQueryData mediaQueryData, AppBar appBar, Widget txList) {
+    return [
+      Container(
+          height: (mediaQueryData.size.height -
+                  appBar.preferredSize.height -
+                  mediaQueryData.padding.top) *
+              0.3,
+          child: Chart(_userTransaction)),
+      txList
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuuery = MediaQuery.of(context);
@@ -133,37 +199,11 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (isLandscape)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Show Chart'),
-                  Switch.adaptive(
-                    value: _showChart,
-                    onChanged: (val) {
-                      setState(() {
-                        _showChart = val;
-                      });
-                    },
-                  )
-                ],
-              ),
+              ..._buildLandscapeContent(
+                  mediaQuuery, appBar, transactionListWidget),
             if (!isLandscape)
-              Container(
-                  height: (mediaQuuery.size.height -
-                          appBar.preferredSize.height -
-                          mediaQuuery.padding.top) *
-                      0.3,
-                  child: Chart(_userTransaction)),
-            if (!isLandscape) transactionListWidget,
-            if (isLandscape)
-              _showChart
-                  ? Container(
-                      height: (mediaQuuery.size.height -
-                              appBar.preferredSize.height -
-                              mediaQuuery.padding.top) *
-                          0.7,
-                      child: Chart(_userTransaction))
-                  : transactionListWidget
+              ..._buildPortraitContent(
+                  mediaQuuery, appBar, transactionListWidget),
           ],
         ),
       ),
