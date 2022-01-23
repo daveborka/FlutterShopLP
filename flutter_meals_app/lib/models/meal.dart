@@ -43,19 +43,4 @@ class Meal {
       @required this.isLactoseFree,
       @required this.isVegan,
       @required this.isVegetarian});
-
-  String get complexityText {
-    switch (complexity) {
-      case Complexity.Simple:
-        return "Simple";
-      case Complexity.Moderate:
-        return "Moderate";
-      case Complexity.Challenging:
-        return "Challenging";
-      case Complexity.Hard:
-        return "Hard";
-      default:
-        return "Unkown";
-    }
-  }
 }
