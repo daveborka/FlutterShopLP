@@ -73,7 +73,7 @@ class MealDetailScreen extends StatelessWidget {
         ),
       ),
       appBar: AppBar(
-        title: Text('${selectedMeal.title}}'),
+        title: Text('${selectedMeal.title}'),
       ),
     );
   }
