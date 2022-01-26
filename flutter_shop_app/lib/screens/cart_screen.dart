@@ -3,6 +3,9 @@ import 'package:provider/provider.dart';
 
 import '../providers/cart.dart' show Cart;
 import '../widgets/cart_item.dart';
+import '../providers/orders.dart';
+import '../widgets/app_drawer.dart';
+import '../screens/orders_screen.dart';
 
 class CartScreen extends StatelessWidget {
   static const routeName = '/cart';
@@ -32,7 +35,7 @@ class CartScreen extends StatelessWidget {
                   ),
                   Chip(
                     label: Text(
-                      '${cartContainer.totalAmount} Ft',
+                      '${cartContainer.totalAmount.toStringAsFixed(2)} Ft',
                       style: TextStyle(
                           color: Theme.of(context)
                               .primaryTextTheme
@@ -42,7 +45,13 @@ class CartScreen extends StatelessWidget {
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
                   FlatButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Provider.of<Orders>(context, listen: false).addOrder(
+                            cartContainer.items.values.toList(),
+                            cartContainer.totalAmount);
+                        cartContainer.clear();
+                        Navigator.of(context).pushNamed(OrdersScreem.routeName);
+                      },
                       child: Text(
                         'ORDER NOW',
                         style: TextStyle(color: Theme.of(context).primaryColor),
@@ -58,14 +67,16 @@ class CartScreen extends StatelessWidget {
               child: ListView.builder(
             itemCount: cartContainer.getItemCount,
             itemBuilder: (context, index) => CartItem(
-                cartItemid: cartContainer.items.values.toList()[index].id,
-                productId: cartContainer.items.keys.toList()[index],
-                title: cartContainer.items.values.toList()[index].title,
-                quantity: cartContainer.items.values.toList()[index].quantity,
-                price: cartContainer.items.values.toList()[index].price),
+              cartItemid: cartContainer.items.values.toList()[index].id,
+              productId: cartContainer.items.keys.toList()[index],
+              title: cartContainer.items.values.toList()[index].title,
+              quantity: cartContainer.items.values.toList()[index].quantity,
+              price: cartContainer.items.values.toList()[index].price,
+            ),
           ))
         ],
       ),
+      drawer: AppDrawer(),
     );
   }
 }
