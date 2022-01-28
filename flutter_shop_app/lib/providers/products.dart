@@ -60,8 +60,12 @@ class Products with ChangeNotifier {
     return items.where((element) => element.isFavorite).toList();
   }
 
-  void addProduct() {
-    //_items.add(value);
+  void addProduct(Product value) {
+    if (items.contains(value)) {
+      return;
+    }
+
+    _items.add(value);
     notifyListeners();
   }
 
