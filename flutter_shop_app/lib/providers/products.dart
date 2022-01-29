@@ -1,5 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
-
+import 'package:http/http.dart' as http;
 import './product.dart';
 
 class Products with ChangeNotifier {
@@ -60,17 +61,31 @@ class Products with ChangeNotifier {
     return items.where((element) => element.isFavorite).toList();
   }
 
-  void addProduct(Product value) {
-    if (items.contains(value)) {
-      return;
+  Future<void> addProduct(Product value) async {
+    final url = Uri.parse(
+        'https://flutter-learning-ceabd-default-rtdb.europe-west1.firebasedatabase.app/products');
+    try {
+      final response = await http.post(url,
+          body: json.encode(
+            {
+              'title': value.title,
+              'description': value.description,
+              'price': value.price,
+              'imageUrl': value.imageUrl
+            },
+          ));
+      Product product = Product(
+          id: json.decode(response.body)['name'],
+          title: value.title,
+          description: value.description,
+          price: value.price,
+          imageUrl: value.imageUrl);
+      _items.add(product);
+      notifyListeners();
+    } catch (error) {
+      print(error);
+      throw error;
     }
-    Product product = Product(
-        id: DateTime.now().toString(),
-        title: value.title,
-        description: value.description,
-        price: value.price);
-    _items.add(product);
-    notifyListeners();
   }
 
   void updateProduct(String id, Product newProduct) {
