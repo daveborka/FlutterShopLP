@@ -64,9 +64,21 @@ class Products with ChangeNotifier {
     if (items.contains(value)) {
       return;
     }
-
-    _items.add(value);
+    Product product = Product(
+        id: DateTime.now().toString(),
+        title: value.title,
+        description: value.description,
+        price: value.price);
+    _items.add(product);
     notifyListeners();
+  }
+
+  void updateProduct(String id, Product newProduct) {
+    final prodIndex = items.indexWhere((element) => element.id == id);
+    if (prodIndex >= 0) {
+      _items[prodIndex] = newProduct;
+      notifyListeners();
+    }
   }
 
   Product findById(String id) =>
