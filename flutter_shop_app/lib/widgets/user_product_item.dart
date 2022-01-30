@@ -30,9 +30,24 @@ class UserProductItem extends StatelessWidget {
                 color: Theme.of(context).primaryColor,
               ),
               IconButton(
-                onPressed: () {
-                  Provider.of<Products>(context, listen: false)
-                      .deleteProduct(this.id);
+                onPressed: () async {
+                  await Provider.of<Products>(context, listen: false)
+                      .deleteProduct(this.id)
+                      .catchError((_) {
+                    return showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                              title: Text('Error Occurred'),
+                              content: Text('Something went wrong'),
+                              actions: [
+                                FlatButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text('OK'))
+                              ],
+                            ));
+                  });
                 },
                 icon: Icon(Icons.delete),
                 color: Theme.of(context).errorColor,

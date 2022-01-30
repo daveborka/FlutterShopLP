@@ -76,13 +76,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
     var productContainer = Provider.of<Products>(context);
 
     Future<void> _saveForm() async {
-      setState(() {
-        isLoading = true;
-      });
       final isValid = _fomrKey.currentState.validate();
       if (!isValid) {
         return;
       }
+      setState(() {
+        isLoading = true;
+      });
       _fomrKey.currentState.save();
       try {
         if (_editedProduct.id != null) {
@@ -92,7 +92,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
           await productContainer.addProduct(_editedProduct);
         }
       } catch (error) {
-        await showDialog(
+        showDialog(
             context: context,
             builder: (ctx) => AlertDialog(
                   title: Text('Error Occurred'),
