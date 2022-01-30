@@ -95,7 +95,6 @@ class _CartScreenState extends State<CartScreen> {
                             style: TextStyle(
                                 color: Theme.of(context).primaryColor),
                           ),
-                    disabledTextColor: Colors.amber,
                   )
                 ],
               ),
