@@ -30,8 +30,24 @@ class ProductItem extends StatelessWidget {
                     icon: Icon(product.isFavorite
                         ? Icons.favorite
                         : Icons.favorite_border),
-                    onPressed: () {
-                      product.toggleFavoriteStatus();
+                    onPressed: () async {
+                      try {
+                        await product.toggleFavoriteStatus();
+                      } catch (error) {
+                        return showDialog(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                                  title: Text('Error Occurred'),
+                                  content: Text('Something went wrong'),
+                                  actions: [
+                                    FlatButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text('OK'))
+                                  ],
+                                ));
+                      }
                     },
                     color: Theme.of(context).accentColor,
                   )),

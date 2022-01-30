@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../providers/cart.dart';
@@ -62,12 +63,19 @@ class Orders with ChangeNotifier {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       final List<OrderItem> loadedOrders = [];
+      List<CartItem> items = [];
       extractedData.forEach((prodId, prodData) {
         loadedOrders.add(OrderItem(
           id: prodId,
           amount: prodData['amount'],
-          dateTime: prodData['dateTime'],
-          products: prodData['prodcuts'],
+          dateTime: DateTime.parse(prodData['dateTime']),
+          products: (prodData["products"] as List<dynamic>)
+              .map((e) => CartItem(
+                  id: e["id"],
+                  title: e["title"],
+                  quantity: e["quantity"],
+                  price: e["price"]))
+              .toList(),
         ));
       });
       _orders = loadedOrders;
@@ -76,5 +84,15 @@ class Orders with ChangeNotifier {
     } catch (error) {
       throw error;
     }
+  }
+
+  List<CartItem> getCartItemsFromDb(Map<String, dynamic> map) {
+    List<CartItem> items = [];
+    map.forEach((key, value) => items.add(CartItem(
+        id: value["id"],
+        title: value["title"],
+        quantity: value["quantity"],
+        price: double.parse(value["price"]))));
+    return items;
   }
 }

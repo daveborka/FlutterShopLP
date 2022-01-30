@@ -1,4 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_complete_guide/models/http_exception.dart';
+import 'package:http/http.dart' as http;
 
 class Product with ChangeNotifier {
   final String id;
@@ -16,11 +19,23 @@ class Product with ChangeNotifier {
       @required this.imageUrl,
       this.isFavorite = false});
 
-  void toggleFavoriteStatus() {
+  Future<void> toggleFavoriteStatus() async {
     isFavorite = !isFavorite;
     final url = Uri.parse(
-        'https://flutter-learning-ceabd-default-rtdb.europe-west1.firebasedatabase.app/products.json');
+        'https://flutter-learning-ceabd-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json');
 
+    final response = await http.patch(url,
+        body: json.encode({
+          'title': this.title,
+          'description': this.description,
+          'price': this.price,
+          'imageUrl': this.imageUrl,
+          'isFavorite': this.isFavorite
+        }));
+    if (response.statusCode > 400) {
+      isFavorite = !isFavorite;
+      throw HttpException('Marking as a favorite is incompleted.');
+    }
     notifyListeners();
   }
 }
