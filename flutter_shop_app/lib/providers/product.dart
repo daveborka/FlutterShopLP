@@ -25,13 +25,7 @@ class Product with ChangeNotifier {
         'https://flutter-learning-ceabd-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json');
 
     final response = await http.patch(url,
-        body: json.encode({
-          'title': this.title,
-          'description': this.description,
-          'price': this.price,
-          'imageUrl': this.imageUrl,
-          'isFavorite': this.isFavorite
-        }));
+        body: json.encode({'isFavorite': this.isFavorite}));
     if (response.statusCode > 400) {
       isFavorite = !isFavorite;
       throw HttpException('Marking as a favorite is incompleted.');
