@@ -37,28 +37,31 @@ class _OrderItemState extends State<OrderItem> {
           ),
           if (_expanded)
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 4),
-              height: min(widget.order.products.length * 20.0 + 10, 100),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+              height: min(widget.order.products.length * 50.0 + 10, 100),
               child: ListView.builder(
-                itemBuilder: (_, index) => Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Container(
-                      width: 100,
-                      child: Text(
-                        widget.order.products[index].title,
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                itemBuilder: (_, index) => Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Container(
+                        width: 100,
+                        child: Text(
+                          widget.order.products[index].title,
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
                       ),
-                    ),
-                    Container(
-                      width: 100,
-                      child: Text(
-                        '${widget.order.products[index].quantity}db x ${widget.order.products[index].price}',
-                        style: TextStyle(fontSize: 18, color: Colors.grey),
-                      ),
-                    )
-                  ],
+                      Container(
+                        width: 100,
+                        child: Text(
+                          '${widget.order.products[index].quantity}db x ${widget.order.products[index].price}',
+                          style: TextStyle(fontSize: 18, color: Colors.grey),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
                 itemCount: widget.order.products.length,
               ),

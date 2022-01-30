@@ -7,9 +7,16 @@ import '../providers/orders.dart';
 import '../widgets/app_drawer.dart';
 import '../screens/orders_screen.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
   static const routeName = '/cart';
+
   @override
+  State<CartScreen> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+  @override
+  var _isOrderProcessing = false;
   Widget build(BuildContext context) {
     final cartContainer = Provider.of<Cart>(context);
     return Scaffold(
@@ -45,17 +52,50 @@ class CartScreen extends StatelessWidget {
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
                   FlatButton(
-                      onPressed: () {
-                        Provider.of<Orders>(context, listen: false).addOrder(
-                            cartContainer.items.values.toList(),
-                            cartContainer.totalAmount);
-                        cartContainer.clear();
-                        Navigator.of(context).pushNamed(OrdersScreem.routeName);
-                      },
-                      child: Text(
-                        'ORDER NOW',
-                        style: TextStyle(color: Theme.of(context).primaryColor),
-                      ))
+                    onPressed: cartContainer.getItemCount > 0
+                        ? () async {
+                            try {
+                              setState(() {
+                                _isOrderProcessing = true;
+                              });
+                              await Provider.of<Orders>(context, listen: false)
+                                  .addOrder(cartContainer.items.values.toList(),
+                                      cartContainer.totalAmount);
+                              cartContainer.clear();
+
+                              Navigator.of(context)
+                                  .pushNamed(OrdersScreem.routeName);
+                            } catch (error) {
+                              showDialog(
+                                  context: context,
+                                  builder: (ctx) {
+                                    return AlertDialog(
+                                      title: Text('Error Occurred'),
+                                      content: Text('Something went wrong'),
+                                      actions: [
+                                        FlatButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text('OK'))
+                                      ],
+                                    );
+                                  });
+                            } finally {
+                              setState(() {
+                                _isOrderProcessing = false;
+                              });
+                            }
+                          }
+                        : null,
+                    child: _isOrderProcessing
+                        ? CircularProgressIndicator()
+                        : Text(
+                            'ORDER NOW',
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColor),
+                          ),
+                  )
                 ],
               ),
             ),

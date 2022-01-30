@@ -18,6 +18,9 @@ class Product with ChangeNotifier {
 
   void toggleFavoriteStatus() {
     isFavorite = !isFavorite;
+    final url = Uri.parse(
+        'https://flutter-learning-ceabd-default-rtdb.europe-west1.firebasedatabase.app/products.json');
+
     notifyListeners();
   }
 }
