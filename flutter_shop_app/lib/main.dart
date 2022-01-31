@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_complete_guide/screens/auth_screen.dart';
-import 'package:flutter_complete_guide/screens/edit_product_screen.dart';
+import 'package:flutter_complete_guide/providers/auth.dart';
 
 import 'package:provider/provider.dart';
 
@@ -12,6 +11,8 @@ import './providers/products.dart';
 import './providers/cart.dart';
 import './screens/cart_screen.dart';
 import './providers/orders.dart';
+import './screens/auth_screen.dart';
+import './screens/edit_product_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -22,6 +23,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (ctx) => Products(),
+        ),
+        ChangeNotifierProvider(
+          create: (ctx) => Auth(),
         ),
         ChangeNotifierProvider(
           create: (ctx) => Cart(),
