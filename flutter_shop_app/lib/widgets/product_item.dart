@@ -4,12 +4,15 @@ import 'package:provider/provider.dart';
 import '../providers/product.dart';
 import '../screens/product_detail_screen.dart';
 import '../providers/cart.dart';
+import '../providers/auth.dart';
 
 class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final singleProduct = Provider.of<Product>(context, listen: false);
     final cartContainer = Provider.of<Cart>(context, listen: false);
+    final authContainer = Provider.of<Auth>(context, listen: false);
+
     return GridTile(
       child: GestureDetector(
         onTap: () {
@@ -32,7 +35,8 @@ class ProductItem extends StatelessWidget {
                         : Icons.favorite_border),
                     onPressed: () async {
                       try {
-                        await product.toggleFavoriteStatus();
+                        await product.toggleFavoriteStatus(
+                            authContainer.Token, authContainer.UserId);
                       } catch (error) {
                         return showDialog(
                             context: context,

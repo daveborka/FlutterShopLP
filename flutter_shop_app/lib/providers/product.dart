@@ -10,22 +10,23 @@ class Product with ChangeNotifier {
   final double price;
   final String imageUrl;
   bool isFavorite;
-
   Product(
       {@required this.id,
       @required this.title,
       @required this.description,
       @required this.price,
       @required this.imageUrl,
-      this.isFavorite = false});
+      this.isFavorite});
 
-  Future<void> toggleFavoriteStatus() async {
+  Future<void> toggleFavoriteStatus(String token, String userId) async {
     isFavorite = !isFavorite;
     final url = Uri.parse(
-        'https://flutter-learning-ceabd-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json');
+        'https://flutter-learning-ceabd-default-rtdb.europe-west1.firebasedatabase.app/userFavorites/$userId/$id.json?auth=$token');
 
-    final response = await http.patch(url,
-        body: json.encode({'isFavorite': this.isFavorite}));
+    final response = await http.put(url,
+        body: json.encode(
+          isFavorite,
+        ));
     if (response.statusCode > 400) {
       isFavorite = !isFavorite;
       throw HttpException('Marking as a favorite is incompleted.');

@@ -5,6 +5,9 @@ import 'package:http/http.dart' as http;
 import './product.dart';
 
 class Products with ChangeNotifier {
+  final String token;
+  final String userId;
+  Products(this.token, this.userId, this._items);
   List<Product> _items = [
     // Product(
     //   id: 'p1',
@@ -62,21 +65,32 @@ class Products with ChangeNotifier {
     return items.where((element) => element.isFavorite).toList();
   }
 
-  Future<void> fetchAndSetProducts() async {
+  Future<void> fetchAndSetProducts([bool filterByuser = false]) async {
+    String filteringParams =
+        filterByuser ? '&orderBy="creatorId"&equalTo="$userId"' : "";
     final url = Uri.parse(
-        'https://flutter-learning-ceabd-default-rtdb.europe-west1.firebasedatabase.app/products.json');
+        'https://flutter-learning-ceabd-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$token$filteringParams');
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadedProduct = [];
+      if (extractedData == null) {
+        return;
+      }
+      final favoritesUrl = Uri.parse(
+          'https://flutter-learning-ceabd-default-rtdb.europe-west1.firebasedatabase.app/userFavorites/$userId.json?auth=$token');
+      final favoriteResponse = await http.get(favoritesUrl);
+      final favoriteData = json.decode(favoriteResponse.body);
       extractedData.forEach((prodId, prodData) {
         loadedProduct.add(Product(
-            id: prodId,
-            title: prodData['title'],
-            description: prodData['description'],
-            price: prodData['price'],
-            imageUrl: prodData['imageUrl'],
-            isFavorite: prodData['isFavorite']));
+          id: prodId,
+          title: prodData['title'],
+          description: prodData['description'],
+          price: prodData['price'],
+          imageUrl: prodData['imageUrl'],
+          isFavorite:
+              favoriteData == null ? false : favoriteData[prodId] ?? false,
+        ));
       });
       _items = loadedProduct;
       notifyListeners();
@@ -88,7 +102,7 @@ class Products with ChangeNotifier {
 
   Future<void> addProduct(Product value) async {
     final url = Uri.parse(
-        'https://flutter-learning-ceabd-default-rtdb.europe-west1.firebasedatabase.app/products.json');
+        'https://flutter-learning-ceabd-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$token');
     try {
       final response = await http.post(url,
           body: json.encode(
@@ -96,7 +110,8 @@ class Products with ChangeNotifier {
               'title': value.title,
               'description': value.description,
               'price': value.price,
-              'imageUrl': value.imageUrl
+              'imageUrl': value.imageUrl,
+              'creatorId': userId,
             },
           ));
       Product product = Product(
@@ -115,7 +130,7 @@ class Products with ChangeNotifier {
 
   Future<void> updateProduct(String id, Product newProduct) async {
     final url = Uri.parse(
-        'https://flutter-learning-ceabd-default-rtdb.europe-west1.firebasedatabase.app/products/${id}.json');
+        'https://flutter-learning-ceabd-default-rtdb.europe-west1.firebasedatabase.app/products/${id}.json?auth=$token');
     final prodIndex = items.indexWhere((element) => element.id == id);
     if (prodIndex >= 0) {
       try {
@@ -136,7 +151,7 @@ class Products with ChangeNotifier {
 
   Future<void> deleteProduct(String id) async {
     final url = Uri.parse(
-        'https://flutter-learning-ceabd-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json');
+        'https://flutter-learning-ceabd-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json?auth=$token');
     final existingProductIndex =
         _items.indexWhere((element) => element.id == id);
     var existingProduct = _items[existingProductIndex];
