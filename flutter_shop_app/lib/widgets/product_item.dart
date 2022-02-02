@@ -15,15 +15,18 @@ class ProductItem extends StatelessWidget {
 
     return GridTile(
       child: GestureDetector(
-        onTap: () {
-          Navigator.of(context).pushNamed(ProductDetailScreen.routeName,
-              arguments: singleProduct.id);
-        },
-        child: Image.network(
-          singleProduct.imageUrl,
-          fit: BoxFit.cover,
-        ),
-      ),
+          onTap: () {
+            Navigator.of(context).pushNamed(ProductDetailScreen.routeName,
+                arguments: singleProduct.id);
+          },
+          child: Hero(
+            tag: singleProduct.id,
+            child: FadeInImage(
+              placeholder: AssetImage('assets/images/product-placeholder.png'),
+              image: NetworkImage(singleProduct.imageUrl),
+              fit: BoxFit.cover,
+            ),
+          )),
       footer: ClipRRect(
         borderRadius: BorderRadius.circular(5),
         child: GridTileBar(
